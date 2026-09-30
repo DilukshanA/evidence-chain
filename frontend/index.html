@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EvidenceChain - Digital Evidence Chain of Custody</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img class="logo" src="logo.png" alt="EvidenceChain logo">
+      <div>
+        <div class="brand-name">EvidenceChain</div>
+        <div class="brand-sub">Tamper-proof chain of custody for digital evidence</div>
+      </div>
+    </div>
+    <div class="wallet">
+      <select id="modeSelect" title="Connection mode">
+        <option value="local">Local test accounts</option>
+        <option value="metamask">MetaMask</option>
+      </select>
+      <select id="accountSelect" title="Act as"></select>
+      <button id="connectBtn" class="btn small hidden">Connect MetaMask</button>
+      <div id="whoami" class="whoami">Not connected</div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab active" data-tab="dashboard">Dashboard</button>
+    <button class="tab" data-tab="register">Register Evidence</button>
+    <button class="tab" data-tab="custody">Custody Actions</button>
+    <button class="tab" data-tab="verify">Verify File</button>
+    <button class="tab" data-tab="admin">Admin</button>
+  </nav>
+
+  <main>
+    <!-- DASHBOARD -->
+    <section id="tab-dashboard" class="panel active">
+      <div class="stats">
+        <div class="stat"><div class="stat-num" id="statCases">0</div><div class="stat-label">Cases</div></div>
+        <div class="stat"><div class="stat-num" id="statEvidence">0</div><div class="stat-label">Evidence items</div></div>
+        <div class="stat"><div class="stat-num" id="statPending">0</div><div class="stat-label">Waiting for you</div></div>
+        <div class="stat"><div class="stat-num" id="statBlock">-</div><div class="stat-label">Latest block</div></div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h2>Evidence register</h2>
+          <button class="btn small ghost" id="refreshBtn">Refresh</button>
+        </div>
+        <table class="table">
+          <thead><tr><th>ID</th><th>Case</th><th>File</th><th>SHA-256 fingerprint</th><th>Current holder</th><th>Status</th><th></th></tr></thead>
+          <tbody id="evidenceRows"><tr><td colspan="7" class="muted">No evidence yet.</td></tr></tbody>
+        </table>
+      </div>
+      <div class="card" id="timelineCard" style="display:none">
+        <div class="card-head"><h2 id="timelineTitle">Chain of custody</h2></div>
+        <ol class="timeline" id="timeline"></ol>
+      </div>
+    </section>
+
+    <!-- REGISTER -->
+    <section id="tab-register" class="panel">
+      <div class="grid2">
+        <div class="card">
+          <h2>1. Open a case</h2>
+          <p class="muted">Investigators only.</p>
+          <label>Case number<input id="caseNumber" placeholder="GAL/CR/2026/0150" /></label>
+          <label>Title<input id="caseTitle" placeholder="Short description of the incident" /></label>
+          <button class="btn" id="createCaseBtn">Create case</button>
+        </div>
+        <div class="card">
+          <h2>2. Register evidence file</h2>
+          <p class="muted">The file never leaves your computer. Only its SHA-256 fingerprint is stored on the blockchain.</p>
+          <label>Case<select id="evCase"></select></label>
+          <label>Evidence file<input type="file" id="evFile" /></label>
+          <div class="hashbox" id="evHash">Fingerprint will appear here</div>
+          <label>Description<input id="evDesc" placeholder="e.g. CCTV clip from bank entrance, 14:02-14:09" /></label>
+          <button class="btn" id="registerEvBtn">Register evidence on blockchain</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CUSTODY -->
+    <section id="tab-custody" class="panel">
+      <div class="grid2">
+        <div class="card">
+          <h2>Hand over evidence</h2>
+          <p class="muted">Only the current holder can start a handover. The receiver must accept it.</p>
+          <label>Evidence<select id="trEvidence"></select></label>
+          <label>Hand over to<select id="trTo"></select></label>
+          <label>Notes<input id="trNotes" placeholder="e.g. Sealed bag #A12, seal intact" /></label>
+          <button class="btn" id="requestTrBtn">Request transfer</button>
+          <hr />
+          <h3>Submit to court</h3>
+          <label>Court<select id="courtSelect"></select></label>
+          <button class="btn" id="submitCourtBtn">Submit selected evidence to court</button>
+        </div>
+        <div class="card">
+          <h2>Waiting for you</h2>
+          <p class="muted">Transfers sent to the connected account.</p>
+          <div id="pendingList" class="pending"><div class="muted">Nothing waiting.</div></div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h2>Forensic analysis</h2>
+          <p class="muted">Forensic lab only. The lab re-hashes the file it received. If the hash does not match, the contract refuses the analysis.</p>
+          <label>Evidence<select id="anEvidence"></select></label>
+          <label>Evidence file received<input type="file" id="anFile" /></label>
+          <div class="hashbox" id="anFileHash">-</div>
+          <label>Analysis report (PDF etc.)<input type="file" id="anReport" /></label>
+          <div class="hashbox" id="anReportHash">-</div>
+          <label>Findings<input id="anFindings" placeholder="e.g. Face of suspect matched with ID photo" /></label>
+          <button class="btn" id="analysisBtn">Record analysis</button>
+        </div>
+        <div class="card">
+          <h2>Seal evidence</h2>
+          <p class="muted">Court only. After sealing, the record can never be changed again.</p>
+          <label>Evidence<select id="sealEvidence"></select></label>
+          <label>Note<input id="sealNote" placeholder="e.g. Judgment delivered on 2026-10-15" /></label>
+          <button class="btn danger" id="sealBtn">Seal evidence</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- VERIFY -->
+    <section id="tab-verify" class="panel">
+      <div class="card narrow">
+        <h2>Verify a file</h2>
+        <p class="muted">Anyone (judge, lawyer, defence) can check whether a file is exactly the one collected at the scene. Checking is free and does not need a transaction.</p>
+        <label>Evidence<select id="vEvidence"></select></label>
+        <label>File to check<input type="file" id="vFile" /></label>
+        <div class="hashbox" id="vHash">-</div>
+        <button class="btn" id="verifyBtn">Verify</button>
+        <div id="verifyResult"></div>
+      </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="tab-admin" class="panel">
+      <div class="grid2">
+        <div class="card">
+          <h2>Register participant</h2>
+          <p class="muted">Admin only. Gives an account a role in the system.</p>
+          <label>Wallet address<input id="pAddr" placeholder="0x..." /></label>
+          <label>Name<input id="pName" placeholder="e.g. SI Perera - Matara Police" /></label>
+          <label>Role
+            <select id="pRole">
+              <option value="1">Investigator (Police)</option>
+              <option value="2">Custodian (Evidence room)</option>
+              <option value="3">Forensic Lab</option>
+              <option value="4">Court</option>
+            </select>
+          </label>
+          <button class="btn" id="addParticipantBtn">Register</button>
+        </div>
+        <div class="card">
+          <h2>Participants</h2>
+          <table class="table">
+            <thead><tr><th>Name</th><th>Role</th><th>Address</th><th>Active</th></tr></thead>
+            <tbody id="participantRows"></tbody>
+          </table>
+          <p class="muted small">Contract: <code id="contractAddr"></code></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="lib/ethers.umd.min.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

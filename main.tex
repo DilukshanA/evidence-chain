@@ -1,0 +1,59 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{xcolor}
+\usepackage{array}
+\usepackage{xurl}
+\usepackage[colorlinks=true,urlcolor=linkblue,linkcolor=black]{hyperref}
+
+\definecolor{accent}{HTML}{12355B}
+\definecolor{linkblue}{HTML}{0B5CAD}
+
+\hypersetup{
+  pdftitle={EvidenceChain: Blockchain-Based Chain of Custody for Digital Evidence},
+  pdfauthor={Group 36},
+  pdfsubject={EC8204 Blockchain and Cyber Security}
+}
+
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\renewcommand{\arraystretch}{1.6}
+
+\begin{document}
+
+% ---------- Header ----------
+\begin{center}
+  {\Large\bfseries UNIVERSITY OF RUHUNA}\\[0.3em]
+  {\large Faculty of Engineering}\\[0.2em]
+  {\itshape Department of Electrical \& Information Engineering}\\[0.9em]
+  {\bfseries EC8204 -- Blockchain and Cyber Security}\\[0.2em]
+  Group Project
+\end{center}
+
+\vspace{1.5em}
+
+% ---------- Details (label: value) ----------
+\begin{tabular}{@{}>{\leavevmode\bfseries\color{accent}}p{3.3cm}@{\hspace{0.2cm}}>{\raggedright\arraybackslash}p{\dimexpr\textwidth-3.5cm\relax}@{}}
+  Title:         & EvidenceChain: Blockchain-Based Chain of Custody for Digital Evidence \\
+  Group No:      & 36 \\
+  Group Members: & Abenayaka D. (EG/2021/4376) \newline
+                   Jayasundara P.K.T.S. (EG/2021/4582) \\
+  Domain:        & Cyber Security / Digital Forensics \\
+  Application:   & A smart-contract system that records the SHA-256 fingerprint of each
+                   digital evidence file (CCTV clips, phone images, disk images) and every
+                   custody handover between police, evidence room, forensic lab and court on
+                   Ethereum. Files stay off-chain. Handovers need the receiver's approval,
+                   the lab's analysis is rejected if the file hash has changed, and anyone
+                   can re-hash a file to prove it was not tampered with. The court seals the
+                   record when the case ends, so the chain of custody cannot be edited, even
+                   by the system admin. \\
+  All Documents: & \scriptsize\url{https://drive.google.com/drive/folders/1MSP6M_mvETGj3WNUC9PwM0_-1re1BrhY?usp=sharing} \\
+  Demo Video:    & \scriptsize\url{https://drive.google.com/file/d/1GT5zGv4_Ps-KnruIdv8Z9UmRWmxowPbH/view?usp=sharing} \\
+  Presentation:  & \scriptsize\url{https://docs.google.com/presentation/d/1vMrbhHs3eR2zKkxEMYDP9yoljSAWlUhK/edit?usp=sharing&ouid=105776156118332727585&rtpof=true&sd=true} \\
+\end{tabular}
+
+\end{document}
